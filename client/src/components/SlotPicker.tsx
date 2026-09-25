@@ -12,17 +12,13 @@ interface Props {
   onSelect: (s: Slot | null) => void;
   /** Bump to force a slot refetch (e.g. after a 409 conflict). */
   refreshKey?: number;
-  /** Start on this date (e.g. arriving from a waitlist email). */
-  initialDate?: string;
-  /** Rendered under the "no slots" message (e.g. the waitlist join form). */
-  renderEmpty?: (date: string) => React.ReactNode;
 }
 
 /** Date strip + grouped slot grid, shared by the booking flow and reschedule. */
 export default function SlotPicker({
-  provider, serviceId, excludeBookingId, slot, onSelect, refreshKey = 0, initialDate, renderEmpty,
+  provider, serviceId, excludeBookingId, slot, onSelect, refreshKey = 0,
 }: Props) {
-  const [date, setDate] = useState(initialDate ?? toDateStr(new Date()));
+  const [date, setDate] = useState(toDateStr(new Date()));
   const [slots, setSlots] = useState<Slot[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -30,7 +26,7 @@ export default function SlotPicker({
     setLoading(true);
     onSelect(null);
     const exclude = excludeBookingId ? `&excludeBooking=${excludeBookingId}` : '';
-    api.get<{ slots: Slot[] }>(`/api/providers/${provider.id}/slots?serviceId=${serviceId}&date=${date}${exclude}`)
+    api.get<{ slots: Slot[] }>(`/api/provider/slots?serviceId=${serviceId}&date=${date}${exclude}`)
       .then((r) => setSlots(r.slots))
       .catch(() => setSlots([]))
       .finally(() => setLoading(false));
@@ -72,10 +68,7 @@ export default function SlotPicker({
 
       {loading && <p className="muted">Checking availability…</p>}
       {!loading && slots.length === 0 && (
-        <>
-          <p className="muted empty-slots">No slots available on this day — try another date.</p>
-          {renderEmpty?.(date)}
-        </>
+        <p className="muted empty-slots">No slots available on this day — try another date.</p>
       )}
       {!loading &&
         Object.entries(grouped).map(([label, list]) =>

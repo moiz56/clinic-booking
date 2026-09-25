@@ -26,12 +26,8 @@ export default function AdminLayout() {
           <NavLink to="/admin/bookings">🗓️ Bookings</NavLink>
           <NavLink to="/admin/day">⏱️ Day view</NavLink>
           <NavLink to="/admin/week">📆 Week view</NavLink>
-          <NavLink to="/admin/providers">👥 Providers</NavLink>
+          <NavLink to="/admin/settings">⚙️ Settings</NavLink>
           <NavLink to="/admin/reviews">⭐ Reviews</NavLink>
-          <NavLink to="/admin/payments">💳 Payments</NavLink>
-          <NavLink to="/admin/coupons">🏷️ Coupons</NavLink>
-          <NavLink to="/admin/waitlist">🔔 Waitlist</NavLink>
-          <NavLink to="/admin/customers">🙋 Customers</NavLink>
         </nav>
         <div className="admin-user">
           <span>{user?.email ?? ''}</span>

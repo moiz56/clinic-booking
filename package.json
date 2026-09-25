@@ -1,6 +1,7 @@
 {
   "name": "appointment-booking-system",
   "private": true,
+  "type": "module",
   "version": "1.0.0",
   "description": "Multi-vertical appointment booking system (doctor / salon / turf) with slot management, conflict prevention, admin panel and email confirmations",
   "workspaces": [

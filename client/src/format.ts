@@ -1,4 +1,4 @@
-export const money = (cents: number) => `₹${(cents / 100).toLocaleString('en-IN')}`;
+export const money = (cents: number) => `Rs ${(cents / 100).toLocaleString('en-PK')}`;
 
 export const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 export const WEEKDAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -26,8 +26,15 @@ export const addDays = (d: Date, n: number) => {
 /** "HH:MM[:SS]" -> "HH:MM" */
 export const hhmm = (t: string) => t.slice(0, 5);
 
+/** "HH:MM[:SS]" -> "7pm" / "7:30pm" (compact 12-hour, no leading zero, lowercase am/pm) */
+export function fmtHour12(t: string): string {
+  const [h, m] = t.split(':').map(Number);
+  const period = h >= 12 ? 'pm' : 'am';
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  return m === 0 ? `${hour12}${period}` : `${hour12}:${String(m).padStart(2, '0')}${period}`;
+}
+
 export const STATUS_LABELS: Record<string, string> = {
-  pending_payment: 'Awaiting payment',
   confirmed: 'Confirmed',
   completed: 'Completed',
   cancelled: 'Cancelled',

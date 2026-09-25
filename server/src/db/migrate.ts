@@ -14,7 +14,7 @@ async function main() {
   // Connect to the maintenance DB to create the target DB if needed
   const adminUrl = new URL(config.databaseUrl);
   adminUrl.pathname = '/postgres';
-  const admin = new pg.Client({ connectionString: adminUrl.toString() });
+  const admin = new pg.Client({ connectionString: adminUrl.toString(), ssl: config.dbSsl });
   await admin.connect();
   const exists = await admin.query('SELECT 1 FROM pg_database WHERE datname = $1', [dbName]);
   if (exists.rowCount === 0) {
@@ -23,7 +23,7 @@ async function main() {
   }
   await admin.end();
 
-  const client = new pg.Client({ connectionString: config.databaseUrl });
+  const client = new pg.Client({ connectionString: config.databaseUrl, ssl: config.dbSsl });
   await client.connect();
   const sql = readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
   await client.query(sql);

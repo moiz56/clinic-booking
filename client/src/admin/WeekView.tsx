@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { api } from '../api';
 import { addDays, fmtDateTime, fmtTime, STATUS_LABELS, toDateStr, WEEKDAYS_SHORT } from '../format';
-import type { Provider } from '../types';
+import { api } from '../api';
 
 interface WeekBooking {
   id: number;
@@ -10,12 +9,8 @@ interface WeekBooking {
   starts_at: string;
   ends_at: string;
   status: string;
-  provider_id: number;
   customer_name: string;
   service_name: string;
-  provider_name: string;
-  color: string;
-  emoji: string;
 }
 
 const HOUR_START = 6;
@@ -31,22 +26,15 @@ function mondayOf(d: Date): Date {
 
 export default function WeekView() {
   const [start, setStart] = useState(() => toDateStr(mondayOf(new Date())));
-  const [providerId, setProviderId] = useState('');
   const [bookings, setBookings] = useState<WeekBooking[]>([]);
-  const [providers, setProviders] = useState<Provider[]>([]);
   const [selected, setSelected] = useState<WeekBooking | null>(null);
 
   useEffect(() => {
-    api.get<Provider[]>('/api/admin/providers').then(setProviders).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    const q = providerId ? `&providerId=${providerId}` : '';
-    api.get<WeekBooking[]>(`/api/admin/week?start=${start}${q}`)
+    api.get<WeekBooking[]>(`/api/admin/week?start=${start}`)
       .then(setBookings)
       .catch(() => setBookings([]));
     setSelected(null);
-  }, [start, providerId]);
+  }, [start]);
 
   const days = useMemo(
     () => Array.from({ length: 7 }, (_, i) => addDays(new Date(`${start}T00:00:00`), i)),
@@ -78,12 +66,6 @@ export default function WeekView() {
       <div className="dayview-head">
         <h1 className="admin-title">Week view</h1>
         <div className="btn-row">
-          <select className="input" value={providerId} onChange={(e) => setProviderId(e.target.value)}>
-            <option value="">All providers</option>
-            {providers.filter((p) => p.active).map((p) => (
-              <option key={p.id} value={p.id}>{p.emoji} {p.name}</option>
-            ))}
-          </select>
           <button className="btn btn-ghost" onClick={() => shift(-1)}>← Prev</button>
           <button className="btn btn-ghost" onClick={() => setStart(toDateStr(mondayOf(new Date())))}>Today</button>
           <button className="btn btn-ghost" onClick={() => shift(1)}>Next →</button>
@@ -93,14 +75,11 @@ export default function WeekView() {
       {selected && (
         <div className="panel week-popover">
           <div className="panel-head">
-            <h2>
-              <span className="mini-avatar" style={{ background: selected.color }}>{selected.emoji}</span>{' '}
-              {selected.service_name} · <span className="mono">{selected.code}</span>
-            </h2>
+            <h2>{selected.service_name} · <span className="mono">{selected.code}</span></h2>
             <button className="btn btn-ghost btn-sm" onClick={() => setSelected(null)}>✕</button>
           </div>
           <p>
-            {selected.customer_name} with {selected.provider_name} ·{' '}
+            {selected.customer_name} ·{' '}
             {fmtDateTime(selected.starts_at)} – {fmtTime(selected.ends_at)} ·{' '}
             <span className={`badge badge-${selected.status}`}>{STATUS_LABELS[selected.status] ?? selected.status}</span>
           </p>
@@ -140,8 +119,8 @@ export default function WeekView() {
                 {(byDay.get(key) ?? []).map((b) => (
                   <button
                     key={b.id}
-                    className={`tl-booking tl-clickable ${b.status === 'pending_payment' ? 'tl-pending' : ''}`}
-                    style={{ top: top(b.starts_at), height: Math.max(height(b) - 2, 18), borderLeftColor: b.color }}
+                    className="tl-booking tl-clickable"
+                    style={{ top: top(b.starts_at), height: Math.max(height(b) - 2, 18) }}
                     title={`${b.code} — ${b.customer_name} (${b.service_name})`}
                     onClick={() => setSelected(b)}
                   >

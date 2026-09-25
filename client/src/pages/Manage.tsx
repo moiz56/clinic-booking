@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { api, ApiError } from '../api';
 import { fmtDateTime, fmtTime, money, STATUS_LABELS } from '../format';
 import type { Booking } from '../types';
@@ -38,21 +38,7 @@ export default function Manage() {
 
   async function cancel() {
     if (!booking) return;
-    let msg = 'Cancel this booking? The slot will be released.';
-    try {
-      const p = await api.get<{ paid: boolean; refund: { amountCents: number; paidCents: number } | null }>(
-        `/api/bookings/${booking.code}/refund-preview?email=${encodeURIComponent(email.trim())}`
-      );
-      if (p.paid && p.refund) {
-        msg =
-          p.refund.amountCents > 0
-            ? `Cancel this booking? ${money(p.refund.amountCents)} of the ${money(p.refund.paidCents)} you paid will be refunded.`
-            : 'Cancel this booking? Per the cancellation policy, no refund applies this close to the appointment.';
-      }
-    } catch {
-      /* preview is best-effort */
-    }
-    if (!window.confirm(msg)) return;
+    if (!window.confirm('Cancel this booking? The slot will be released.')) return;
     setBusy(true);
     setError('');
     try {
@@ -73,7 +59,7 @@ export default function Manage() {
   return (
     <div className="container narrow-page">
       <h1>Manage your booking</h1>
-      <p className="muted">Enter the booking code from your confirmation email.</p>
+      <p className="muted">Enter your booking code and the email you booked with.</p>
 
       <form onSubmit={lookup} className="lookup-form">
         <input className="input" placeholder="Booking code (e.g. BK-7F3K2A)" required
@@ -100,27 +86,8 @@ export default function Manage() {
             <div><span>When</span><strong>{fmtDateTime(booking.starts_at)} – {fmtTime(booking.ends_at)}</strong></div>
             <div><span>Booked by</span><strong>{booking.customer_name}</strong></div>
             <div><span>Price</span><strong>{money(booking.price_cents)}</strong></div>
-            {(booking.discount_cents ?? 0) > 0 && (
-              <div><span>Discount</span><strong>− {money(booking.discount_cents!)}</strong></div>
-            )}
-            {booking.refund && booking.refund.amountCents > 0 && (
-              <div><span>Refund</span><strong>{money(booking.refund.amountCents)} initiated</strong></div>
-            )}
             {booking.notes && <div><span>Notes</span><strong>{booking.notes}</strong></div>}
           </div>
-          {booking.status === 'pending_payment' && booking.expires_at && new Date(booking.expires_at) > new Date() && (
-            <Link
-              className="btn btn-primary"
-              to={`/checkout/${booking.code}?email=${encodeURIComponent(email.trim())}`}
-            >
-              💳 Complete payment
-            </Link>
-          )}
-          {(booking.amount_due_cents ?? 0) > 0 && booking.status !== 'pending_payment' && (
-            <Link className="panel-link" to={`/receipt/${booking.code}?email=${encodeURIComponent(email.trim())}`}>
-              🧾 View receipt
-            </Link>
-          )}
           {upcoming && (
             <div className="btn-row">
               {canReschedule && (
@@ -130,32 +97,6 @@ export default function Manage() {
               )}
               <button className="btn btn-danger" onClick={cancel} disabled={busy}>
                 {busy ? 'Cancelling…' : 'Cancel booking'}
-              </button>
-            </div>
-          )}
-          {booking.series_code && upcoming && (
-            <div className="series-cancel-row">
-              <span className="muted small">
-                Part of series <strong className="mono">{booking.series_code}</strong>
-              </span>
-              <button
-                className="btn btn-danger-ghost btn-sm"
-                disabled={busy}
-                onClick={async () => {
-                  if (!window.confirm('Cancel ALL remaining sessions in this series?')) return;
-                  setBusy(true);
-                  setError('');
-                  try {
-                    await api.post(`/api/bookings/series/${booking.series_code}/cancel`, { email });
-                    void lookup();
-                  } catch (err) {
-                    setError(err instanceof ApiError ? err.message : 'Series cancellation failed');
-                  } finally {
-                    setBusy(false);
-                  }
-                }}
-              >
-                Cancel remaining series
               </button>
             </div>
           )}

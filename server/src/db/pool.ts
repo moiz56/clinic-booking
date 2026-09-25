@@ -3,7 +3,8 @@ import { config } from '../config.js';
 
 export const pool = new pg.Pool({
   connectionString: config.databaseUrl,
-  max: 10,
+  ssl: config.dbSsl,
+  ...config.dbPool,
 });
 
 pool.on('error', (err) => {

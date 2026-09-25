@@ -6,15 +6,13 @@ import SlotPicker from './SlotPicker';
 
 interface Props {
   booking: Booking;
-  /** Email that owns the booking (guest lookup email or the account email). */
+  /** Email that owns the booking (guest lookup email). */
   email: string;
-  /** Use the authenticated customer endpoint instead of the code+email one. */
-  useCustomerApi?: boolean;
   onDone: (updated: Booking) => void;
   onClose: () => void;
 }
 
-export default function RescheduleDialog({ booking, email, useCustomerApi, onDone, onClose }: Props) {
+export default function RescheduleDialog({ booking, email, onDone, onClose }: Props) {
   const [provider, setProvider] = useState<Provider | null>(null);
   const [slot, setSlot] = useState<Slot | null>(null);
   const [busy, setBusy] = useState(false);
@@ -22,19 +20,17 @@ export default function RescheduleDialog({ booking, email, useCustomerApi, onDon
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    api.get<Provider>(`/api/providers/${booking.provider_id}`)
+    api.get<Provider>('/api/provider')
       .then(setProvider)
       .catch(() => setError('Could not load availability'));
-  }, [booking.provider_id]);
+  }, []);
 
   async function confirm() {
     if (!slot) return;
     setBusy(true);
     setError('');
     try {
-      const updated = useCustomerApi
-        ? await api.post<Booking>(`/api/customer/bookings/${booking.id}/reschedule`, { start: slot.start })
-        : await api.post<Booking>(`/api/bookings/${booking.code}/reschedule`, { email, start: slot.start });
+      const updated = await api.post<Booking>(`/api/bookings/${booking.code}/reschedule`, { email, start: slot.start });
       onDone(updated);
     } catch (err) {
       if (err instanceof ApiError && err.status === 409) {
