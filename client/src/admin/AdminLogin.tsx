@@ -5,7 +5,7 @@ import type { AdminUser } from '../types';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('admin@bookit.local');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -41,7 +41,6 @@ export default function AdminLogin() {
         </label>
         {error && <p className="error-box">{error}</p>}
         <button className="btn btn-primary btn-lg" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
-        <p className="muted hint">Seeded credentials: admin@bookit.local / admin123</p>
       </form>
     </div>
   );
