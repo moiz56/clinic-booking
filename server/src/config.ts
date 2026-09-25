@@ -1,6 +1,11 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+// Schedules are stored as wall-clock times ("19:00") and slots are built with
+// local-time Date math, so the process must run in the clinic's timezone —
+// Vercel's functions default to UTC, which would shift every slot by hours.
+process.env.TZ = process.env.CLINIC_TIMEZONE ?? 'Asia/Karachi';
+
 const databaseUrl =
   process.env.DATABASE_URL ?? 'postgres://postgres:postgres@localhost:5432/appointments';
 
