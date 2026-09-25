@@ -42,15 +42,15 @@ export default function Dashboard() {
 
       <section className="panel">
         <h2>Recent bookings</h2>
-        <table className="table">
+        <table className="table table-stack">
           <thead><tr><th>Code</th><th>Customer</th><th>When</th><th>Status</th></tr></thead>
           <tbody>
             {recent.map((b) => (
               <tr key={b.id}>
-                <td className="mono">{b.code}</td>
-                <td>{b.customer_name}</td>
-                <td>{fmtDateTime(b.starts_at)}</td>
-                <td><span className={`badge badge-${b.status}`}>{STATUS_LABELS[b.status]}</span></td>
+                <td className="mono" data-label="Code">{b.code}</td>
+                <td data-label="Customer">{b.customer_name}</td>
+                <td data-label="When">{fmtDateTime(b.starts_at)}</td>
+                <td data-label="Status"><span className={`badge badge-${b.status}`}>{STATUS_LABELS[b.status]}</span></td>
               </tr>
             ))}
           </tbody>

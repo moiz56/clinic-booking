@@ -40,7 +40,7 @@ export default function Reviews() {
 
       <div className="panel">
         {reviews.length === 0 && <p className="muted">No reviews yet.</p>}
-        <table className="table">
+        <table className="table table-stack">
           {reviews.length > 0 && (
             <thead>
               <tr>
@@ -51,12 +51,12 @@ export default function Reviews() {
           <tbody>
             {reviews.map((r) => (
               <tr key={r.id} className={r.hidden ? 'row-hidden' : ''}>
-                <td><Stars value={r.rating} /></td>
-                <td className="review-cell">{r.comment || <span className="muted">—</span>}</td>
-                <td>{r.customer_name}<br /><span className="muted small">{r.customer_email}</span></td>
-                <td>{r.service_name}</td>
-                <td className="mono">{r.booking_code}</td>
-                <td className="small">{fmtDate(r.created_at)}</td>
+                <td data-label="Rating"><Stars value={r.rating} /></td>
+                <td className="review-cell" data-label="Comment">{r.comment || <span className="muted">—</span>}</td>
+                <td data-label="Customer">{r.customer_name}<br /><span className="muted small">{r.customer_email}</span></td>
+                <td data-label="Service">{r.service_name}</td>
+                <td className="mono" data-label="Booking">{r.booking_code}</td>
+                <td className="small" data-label="Date">{fmtDate(r.created_at)}</td>
                 <td className="row-actions">
                   <button
                     className={`btn btn-xs ${r.hidden ? 'btn-ghost' : 'btn-danger-ghost'}`}

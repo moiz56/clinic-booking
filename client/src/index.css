@@ -161,7 +161,8 @@ label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-w
 
 /* ================= provider detail / booking ================= */
 .detail-layout { display: grid; grid-template-columns: 300px 1fr; gap: 28px; align-items: start; }
-@media (max-width: 860px) { .detail-layout { grid-template-columns: 1fr; } }
+/* stacked on narrow screens: a sticky card would slide over the booking steps */
+@media (max-width: 860px) { .detail-layout { grid-template-columns: 1fr; } .detail-side { position: static; } }
 .detail-side { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); position: sticky; top: 86px; }
 .detail-side h1 { font-size: 20px; margin-top: 14px; }
 .hours-box { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 14px; }
@@ -267,8 +268,8 @@ label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-w
 .row-hidden { opacity: 0.45; }
 
 /* ================= admin ================= */
-.login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--sidebar-bg); }
-.login-card { background: var(--surface); border-radius: 18px; padding: 36px; width: 380px; display: flex; flex-direction: column; gap: 14px; }
+.login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--sidebar-bg); padding: 16px; }
+.login-card { background: var(--surface); border-radius: 18px; padding: 36px; width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 14px; }
 .login-card .hint { font-size: 12px; text-align: center; margin: 0; }
 
 .admin-shell { display: grid; grid-template-columns: 230px 1fr; min-height: 100vh; }
@@ -300,7 +301,7 @@ label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-w
 
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); margin-bottom: 22px; overflow-x: auto; }
 .panel h2 { font-size: 16px; margin-bottom: 14px; }
-.panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
 .panel-head h2 { margin: 0; }
 .panel-link { display: inline-block; margin-top: 10px; font-weight: 600; font-size: 14px; }
 
@@ -317,7 +318,7 @@ label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-w
 .filter-bar .input { width: auto; min-width: 160px; }
 
 /* ---- day view timeline ---- */
-.dayview-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 14px; }
+.dayview-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 14px; flex-wrap: wrap; }
 .dayview-head .input { width: auto; }
 .timeline-panel { padding: 0; }
 .timeline { display: grid; min-width: 700px; }
@@ -373,3 +374,66 @@ label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-w
 @media (max-width: 800px) { .timeoff-form { grid-template-columns: 1fr; } }
 .timeoff-row { display: flex; gap: 14px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; }
 .timeoff-row .btn { margin-left: auto; }
+
+/* ================= phones & small tablets ================= */
+/* admin: the fixed sidebar becomes a sticky top bar with a swipeable nav row */
+@media (max-width: 800px) {
+  .admin-shell { grid-template-columns: 1fr; }
+  .admin-sidebar {
+    height: auto; z-index: 30; padding: 10px 14px; gap: 8px;
+    flex-direction: row; flex-wrap: wrap; align-items: center;
+  }
+  .admin-brand { padding: 0; font-size: 18px; }
+  .admin-user { margin: 0 0 0 auto; padding: 0; flex-direction: row; align-items: center; }
+  .admin-user > span { display: none; }
+  .admin-sidebar nav {
+    order: 3; flex-basis: 100%; flex-direction: row; overflow-x: auto;
+    scrollbar-width: none; margin: 0 -14px; padding: 0 14px;
+  }
+  .admin-sidebar nav::-webkit-scrollbar { display: none; }
+  .admin-sidebar nav a { white-space: nowrap; padding: 7px 12px; font-size: 13px; }
+  .admin-main { padding: 18px 14px 40px; }
+}
+
+@media (max-width: 640px) {
+  .container { padding: 0 16px; }
+  /* 16px stops iOS Safari from zooming the page when an input is focused */
+  .input { font-size: 16px; }
+
+  .site-main { padding: 20px 0 40px; }
+  .brand { font-size: 18px; }
+  .site-nav a { padding: 7px 10px; font-size: 13px; }
+  .footer-row { flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+
+  .hero { padding: 12px 0 22px; }
+  .hero h1 { font-size: 28px; letter-spacing: -0.5px; }
+  .hero-sub { font-size: 15px; }
+  .detail-side, .step-card, .manage-card { padding: 18px 16px; }
+  .step-card { margin-bottom: 14px; }
+  .service-option { padding: 12px 14px; }
+  .slot-grid { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); }
+
+  .confirm-card { padding: 26px 18px; }
+  .confirm-code strong { font-size: 20px; }
+  .confirm-actions { flex-direction: column; }
+  .manage-head { flex-wrap: wrap; }
+
+  .login-card { padding: 26px 20px; }
+  .admin-title { font-size: 20px; }
+  .panel { padding: 16px; }
+  .filter-bar .input { flex: 1 1 100%; min-width: 0; }
+  .timeoff-row { flex-wrap: wrap; }
+
+  /* tables become one card per row, each value under its column label */
+  .table-stack thead { display: none; }
+  .table-stack, .table-stack tbody, .table-stack tr, .table-stack td { display: block; width: 100%; }
+  .table-stack tr { padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .table-stack tr:last-child { border-bottom: none; }
+  .table-stack td { padding: 3px 0; border-bottom: none; }
+  .table-stack td[data-label]::before {
+    content: attr(data-label); display: block; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
+  }
+  .table-stack .row-actions { padding-top: 8px; }
+  .review-cell { max-width: none; }
+}

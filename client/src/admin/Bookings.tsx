@@ -81,22 +81,22 @@ export default function AdminBookings() {
       {error && <p className="error-box">{error}</p>}
 
       <div className="panel">
-        <table className="table">
+        <table className="table table-stack">
           <thead>
             <tr><th>Code</th><th>Customer</th><th>Service</th><th>When</th><th>Price</th><th>Status</th><th></th></tr>
           </thead>
           <tbody>
             {bookings.map((b) => (
               <tr key={b.id} className={busyId === b.id ? 'row-busy' : ''}>
-                <td className="mono">{b.code}</td>
-                <td>
+                <td className="mono" data-label="Code">{b.code}</td>
+                <td data-label="Customer">
                   {b.customer_name}
                   <div className="muted small">{b.customer_email}</div>
                 </td>
-                <td>{b.service_name}</td>
-                <td>{fmtDateTime(b.starts_at)}<div className="muted small">ends {fmtTime(b.ends_at)}</div></td>
-                <td>{money(b.price_cents)}</td>
-                <td><span className={`badge badge-${b.status}`}>{STATUS_LABELS[b.status]}</span></td>
+                <td data-label="Service">{b.service_name}</td>
+                <td data-label="When">{fmtDateTime(b.starts_at)}<div className="muted small">ends {fmtTime(b.ends_at)}</div></td>
+                <td data-label="Price">{money(b.price_cents)}</td>
+                <td data-label="Status"><span className={`badge badge-${b.status}`}>{STATUS_LABELS[b.status]}</span></td>
                 <td className="row-actions">
                   {b.status === 'confirmed' && (
                     <>

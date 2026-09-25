@@ -152,20 +152,20 @@ function ServicesPanel({ provider, onChanged, onError }: {
         <h2>Services</h2>
         <button className="btn btn-ghost btn-sm" onClick={() => startEditing({ ...(empty as Service), id: 0, isNew: true })}>+ Add service</button>
       </div>
-      <table className="table">
+      <table className="table table-stack">
         <thead><tr><th>Service</th><th>Duration</th><th>Buffer</th><th>Price</th><th>Status</th><th></th></tr></thead>
         <tbody>
           {(provider.services ?? []).map((s) => (
             <tr key={s.id}>
-              <td>
+              <td data-label="Service">
                 <div>{s.name}</div>
                 <div className="muted small rich-text" dangerouslySetInnerHTML={{ __html: s.description }} />
               </td>
-              <td>{s.duration_min} min</td>
-              <td>{s.buffer_min} min</td>
-              <td>{money(s.price_cents)}</td>
-              <td><span className={`badge ${s.active ? 'badge-confirmed' : 'badge-cancelled'}`}>{s.active ? 'Active' : 'Hidden'}</span></td>
-              <td><button className="btn btn-ghost btn-sm" onClick={() => startEditing({ ...s })}>Edit</button></td>
+              <td data-label="Duration">{s.duration_min} min</td>
+              <td data-label="Buffer">{s.buffer_min} min</td>
+              <td data-label="Price">{money(s.price_cents)}</td>
+              <td data-label="Status"><span className={`badge ${s.active ? 'badge-confirmed' : 'badge-cancelled'}`}>{s.active ? 'Active' : 'Hidden'}</span></td>
+              <td className="row-actions"><button className="btn btn-ghost btn-sm" onClick={() => startEditing({ ...s })}>Edit</button></td>
             </tr>
           ))}
         </tbody>
