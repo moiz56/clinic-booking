@@ -20,10 +20,6 @@ export default function Confirmation() {
       <div className="confirm-card">
         <div className="confirm-tick">✓</div>
         <h1>Booking confirmed!</h1>
-        <p className="muted">
-          Save your booking code — you'll need it with <strong>{booking.customer_email}</strong> to
-          manage or cancel this booking.
-        </p>
         <div className="confirm-code">
           <span>Booking code</span>
           <strong>{booking.code}</strong>
