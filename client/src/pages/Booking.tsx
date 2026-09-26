@@ -69,7 +69,7 @@ export default function Booking() {
           Book an appointment with<br />
           <span className="hero-accent">{provider.name}</span>
         </h1>
-        <p className="hero-sub">Real-time availability, instant confirmation.</p>
+        <p className="hero-sub">Saleh Kids Care Clinic - R Block Market Wapda Town Phase 2 Multan</p>
       </section>
 
       <div className="detail-layout">
